@@ -1,4 +1,5 @@
 import { mockReports } from '../data/mockReports'
+import { aggregateReportsByLocation } from '../utils/reportAnalytics'
 
 const STORAGE_KEY = 'wastewatch-reports'
 
@@ -30,6 +31,10 @@ function saveReports(reports) {
 function getSeedReports() {
   return mockReports.map((report) => ({
     ...report,
+    locationId: report.locationId || report.location.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    locationName: report.locationName || report.location,
+    wasteType: report.wasteType || report.category,
+    selectedCategory: report.selectedCategory || report.category,
     createdAt: report.createdAt || new Date().toISOString(),
     status: report.status || 'Under review',
     source: 'demo',
@@ -53,6 +58,10 @@ export function createReport(report) {
   const nextReport = {
     id: report.id || `RPT-${Date.now()}`,
     location: report.location,
+    locationId: report.locationId || report.location.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    locationName: report.locationName || report.location,
+    wasteType: report.wasteType || report.category,
+    selectedCategory: report.selectedCategory || report.category,
     category: report.category,
     description: report.description || '',
     status: report.status || 'Queued for review',
@@ -71,4 +80,8 @@ export function createReport(report) {
 
 export function getReportById(id) {
   return getReports().find((report) => report.id === id) || null
+}
+
+export function getLocationReportAnalytics() {
+  return aggregateReportsByLocation(getReports())
 }

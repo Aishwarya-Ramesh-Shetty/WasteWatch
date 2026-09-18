@@ -84,6 +84,9 @@ function ReportWaste() {
     const newReport = createReport({
       id: `RPT-${Date.now()}`,
       location: formData.location,
+      locationName: formData.location,
+      wasteType: formData.category,
+      selectedCategory: formData.category,
       category: formData.category,
       description: formData.description,
       image: formData.image,

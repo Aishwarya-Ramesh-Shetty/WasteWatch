@@ -26,7 +26,10 @@ function ReportResult() {
       <div className="mb-8 flex items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Report outcome</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">Report Result</h1>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">Report Submitted Successfully</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+            Your report has been added to WasteWatch. Reports from the same area help identify emerging waste hotspots.
+          </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" />
@@ -120,11 +123,11 @@ function ReportResult() {
             <li>• Follow-up: preventive action planning</li>
           </ul>
           <div className="mt-8 flex flex-col gap-3">
-            <Link to="/dashboard" className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
-              View Municipal Dashboard
-            </Link>
-            <Link to="/report" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700">
+            <Link to="/report" className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white">
               Submit Another Report
+            </Link>
+            <Link to="/" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700">
+              Back to Home
             </Link>
           </div>
         </aside>
