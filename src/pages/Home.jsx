@@ -34,15 +34,15 @@ function Home() {
             </h1>
             <p className="mt-4 text-2xl font-medium tracking-tight text-emerald-700">Detect. Predict. Prevent.</p>
             <p className="mt-5 max-w-xl text-lg leading-8 text-slate-600">
-              WasteWatch AI turns citizen waste observations into predictive insights that help identify emerging waste hotspots and support preventive action.
+              A smarter approach to identifying and preventing emerging waste hotspots.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to="/report" className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-                Report Waste
+                Get Started
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
-                View Municipal Dashboard
+                View Dashboard
               </Link>
             </div>
           </div>

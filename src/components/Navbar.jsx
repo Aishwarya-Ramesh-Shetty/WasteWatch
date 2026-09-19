@@ -6,6 +6,7 @@ const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Report Waste', to: '/report' },
   { label: 'Municipal Dashboard', to: '/dashboard' },
+  { label: 'Login', to: '/login' },
 ]
 
 function Navbar() {

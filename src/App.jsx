@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import HotspotDetails from './pages/HotspotDetails'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import ReportResult from './pages/ReportResult'
 import ReportWaste from './pages/ReportWaste'
 import WhatIfSimulator from './pages/WhatIfSimulator'
@@ -14,6 +16,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/report" element={<ReportWaste />} />
           <Route path="/report/result" element={<ReportResult />} />
           <Route path="/dashboard" element={<Dashboard />} />
