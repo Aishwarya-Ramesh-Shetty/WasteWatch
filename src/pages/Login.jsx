@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { loginUser } from '../services/authService'
 
 const initialState = {
   email: '',
@@ -7,9 +8,11 @@ const initialState = {
 }
 
 function Login() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState(initialState)
   const [errors, setErrors] = useState({})
   const [statusMessage, setStatusMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -33,7 +36,7 @@ function Login() {
     return nextErrors
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     const nextErrors = validateForm()
@@ -43,8 +46,37 @@ function Login() {
       return
     }
 
+    setIsSubmitting(true)
     setErrors({})
-    setStatusMessage('Authentication will be connected in the next backend phase.')
+    setStatusMessage('')
+
+    try {
+      const result = await loginUser({
+        email: formData.email,
+        password: formData.password,
+      })
+
+      if (result?.user?.role === 'CITIZEN') {
+        navigate('/home', { replace: true })
+        return
+      }
+
+      if (result?.user?.role === 'MUNICIPAL_OFFICER') {
+        navigate('/municipal', { replace: true })
+        return
+      }
+
+      if (result?.user?.role === 'ADMIN') {
+        navigate('/admin', { replace: true })
+        return
+      }
+
+      navigate('/login', { replace: true })
+    } catch (error) {
+      setStatusMessage(error.message || 'Unable to log in right now.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -92,9 +124,10 @@ function Login() {
 
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+            disabled={isSubmitting}
+            className="inline-flex w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            Login
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

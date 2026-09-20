@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { registerUser } from '../services/authService'
 
 const initialState = {
   fullName: '',
@@ -9,9 +10,11 @@ const initialState = {
 }
 
 function Register() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState(initialState)
   const [errors, setErrors] = useState({})
   const [statusMessage, setStatusMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -34,6 +37,8 @@ function Register() {
 
     if (!formData.password) {
       nextErrors.password = 'Password is required.'
+    } else if (formData.password.length < 8) {
+      nextErrors.password = 'Password must be at least 8 characters.'
     }
 
     if (!formData.confirmPassword) {
@@ -45,7 +50,7 @@ function Register() {
     return nextErrors
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     const nextErrors = validateForm()
@@ -55,8 +60,25 @@ function Register() {
       return
     }
 
+    setIsSubmitting(true)
     setErrors({})
-    setStatusMessage('Authentication will be connected in the next backend phase.')
+    setStatusMessage('')
+
+    try {
+      await registerUser({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      })
+
+      setStatusMessage('Citizen account created successfully. Please sign in.')
+      setFormData(initialState)
+      setTimeout(() => navigate('/login'), 800)
+    } catch (error) {
+      setStatusMessage(error.message || 'Unable to create the citizen account right now.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -138,9 +160,10 @@ function Register() {
 
           <button
             type="submit"
-            className="inline-flex w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+            disabled={isSubmitting}
+            className="inline-flex w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            Create Account
+            {isSubmitting ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 
