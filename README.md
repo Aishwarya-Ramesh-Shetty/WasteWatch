@@ -11,10 +11,32 @@
 **Live Website:**  
 `waste-watch-sigma.vercel.app`
 
+### Backend
+
+**Live Website:**  
+`https://wastewatch-backend-vbw6.onrender.com`
 
 
 ---
+# 🔐 Demo Authentication & Account Setup
 
+WasteWatch AI uses role-based authentication with three roles:
+
+- `CITIZEN` — users can register themselves through the application.
+- `MUNICIPAL_OFFICER` — accounts are created by an Admin.
+- `ADMIN` — manages Municipal Officer accounts.
+
+## Admin Account
+
+The Admin account is created from the backend using environment variables.
+
+Set the following variables in the backend environment:
+
+```env
+ADMIN_EMAIL=admin@wastewatch.ai
+ADMIN_PASSWORD=<YOUR_ADMIN_PASSWORD>
+```
+---
 ## 📖 Overview
 
 Waste management is often reactive:
