@@ -2,7 +2,7 @@ import { Camera, ImageIcon, MapPin, Sparkles, Trash2, UploadCloud } from 'lucide
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { analyzeWasteReport } from '../services/mockAIService'
-import { createReport } from '../services/reportService'
+import { createReport, createReportOnBackend } from '../services/reportService'
 
 const demoLocations = [
   'Beach Zone 04',
@@ -79,26 +79,45 @@ function ReportWaste() {
     setIsAnalyzing(true)
     setError('')
 
-    const analysis = await analyzeWasteReport(formData)
+    try {
+      const analysis = await analyzeWasteReport(formData)
+      const backendReport = await createReportOnBackend({
+        location: formData.location,
+        category: formData.category,
+        description: formData.description,
+        severity: analysis.severity,
+        confidence: analysis.confidence,
+        status: 'Queued for review',
+        aiAnalysis: analysis,
+      })
 
-    const newReport = createReport({
-      id: `RPT-${Date.now()}`,
-      location: formData.location,
-      locationName: formData.location,
-      wasteType: formData.category,
-      selectedCategory: formData.category,
-      category: formData.category,
-      description: formData.description,
-      image: formData.image,
-      severity: analysis.severity,
-      confidence: analysis.confidence,
-      status: 'Queued for review',
-      aiAnalysis: analysis,
-      createdAt: new Date().toISOString(),
-    })
+      const newReport = createReport({
+        ...backendReport,
+        location: formData.location,
+        locationName: formData.location,
+        wasteType: formData.category,
+        selectedCategory: formData.category,
+        category: formData.category,
+        description: formData.description,
+        image: formData.image,
+        severity: analysis.severity,
+        confidence: analysis.confidence,
+        status: 'Queued for review',
+        aiAnalysis: analysis,
+      })
 
-    setIsAnalyzing(false)
-    navigate('/report/result', { state: { report: newReport } })
+      navigate('/report/result', { state: { report: newReport } })
+    } catch (submissionError) {
+      if (submissionError.status === 401) {
+        setError('Your session has expired. Please sign in again before submitting a report.')
+      } else if (submissionError.status === 422) {
+        setError('Please check the report details and try again.')
+      } else {
+        setError('Unable to submit the report right now. Please try again.')
+      }
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
   const isSubmitDisabled = !formData.image || !formData.location || !formData.category || isAnalyzing
@@ -184,7 +203,7 @@ function ReportWaste() {
                   ))}
                 </select>
               </div>
-              <p className="mt-2 text-xs text-slate-500">Demo locations only. This is a frontend mock flow.</p>
+              <p className="mt-2 text-xs text-slate-500">Demo locations only. The submitted report is saved to WasteWatch.</p>
             </div>
 
             <div>
@@ -265,14 +284,14 @@ function ReportWaste() {
             <li>• Image upload preview with local state</li>
             <li>• Demo location selection</li>
             <li>• Simulated AI analysis and validation</li>
-            <li>• Report persistence for the rest of the app</li>
+            <li>• Backend report persistence for municipal review</li>
           </ul>
           <div className="mt-6 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">
             <div className="mb-2 flex items-center gap-2 font-semibold">
               <ImageIcon className="h-4 w-4" />
-              Frontend-only demo
+              Report submission
             </div>
-            This flow stores image data in browser memory and local storage for the MVP.
+            The image preview remains local while report details are persisted in the backend.
           </div>
         </aside>
       </div>

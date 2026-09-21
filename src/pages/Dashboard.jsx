@@ -4,17 +4,30 @@ import { Link } from 'react-router-dom'
 import { mockHotspots } from '../data/mockHotspots'
 import { mockPredictions } from '../data/mockPredictions'
 import { calculateHotspotRisk } from '../services/hotspotRiskService'
-import { getLocationReportAnalytics, getReports } from '../services/reportService'
+import { getReports, getReportsFromBackend } from '../services/reportService'
+import { aggregateReportsByLocation } from '../utils/reportAnalytics'
 
 function Dashboard() {
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState(() => getReports())
 
   useEffect(() => {
-    setReports(getReports())
+    let isActive = true
+
+    getReportsFromBackend()
+      .then((backendReports) => {
+        if (isActive && backendReports.length > 0) {
+          setReports(backendReports)
+        }
+      })
+      .catch(() => {})
+
+    return () => {
+      isActive = false
+    }
   }, [])
 
   const recentReports = reports.slice(0, 5)
-  const locationAnalytics = getLocationReportAnalytics()
+  const locationAnalytics = aggregateReportsByLocation(reports)
   const locationCards = Object.values(locationAnalytics).map((location, index) => {
     const hotspot = mockHotspots.find((item) => item.name === location.locationName)
     const risk = calculateHotspotRisk(location)

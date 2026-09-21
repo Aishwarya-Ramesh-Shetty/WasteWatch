@@ -113,6 +113,30 @@ export async function getCurrentUser() {
   }
 }
 
+export async function authenticatedRequest(path, options = {}) {
+  const token = getStoredToken()
+  if (!token) {
+    const error = new Error('Please sign in to continue.')
+    error.status = 401
+    throw error
+  }
+
+  try {
+    return await request(path, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {}),
+      },
+    })
+  } catch (error) {
+    if (error.status === 401) {
+      logout()
+    }
+    throw error
+  }
+}
+
 export async function createMunicipalOfficer({ name, email, password }) {
   const token = getStoredToken()
   return request('/api/admin/municipal-officers', {

@@ -80,3 +80,6 @@ VITE_API_URL=http://localhost:8000
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `GET /api/auth/me`
+- `POST /api/reports`
+- `GET /api/reports/me`
+- `GET /api/reports`

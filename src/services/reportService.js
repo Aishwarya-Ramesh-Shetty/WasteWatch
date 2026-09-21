@@ -1,4 +1,5 @@
 import { mockReports } from '../data/mockReports'
+import { authenticatedRequest } from './authService'
 import { aggregateReportsByLocation } from '../utils/reportAnalytics'
 
 const STORAGE_KEY = 'wastewatch-reports'
@@ -76,6 +77,49 @@ export function createReport(report) {
   const updatedReports = [nextReport, ...allReports]
   saveReports(updatedReports)
   return nextReport
+}
+
+function normalizeBackendReport(report) {
+  const location = report.location_name || 'Unknown location'
+  return {
+    id: report.id,
+    location,
+    locationId: location.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    locationName: location,
+    wasteType: report.category,
+    selectedCategory: report.category,
+    category: report.category,
+    description: report.description || '',
+    status: report.status,
+    severity: report.severity,
+    confidence: report.confidence,
+    image: '',
+    aiAnalysis: report.ai_analysis || null,
+    createdAt: report.created_at,
+    source: 'backend',
+  }
+}
+
+export async function createReportOnBackend(report) {
+  const createdReport = await authenticatedRequest('/api/reports', {
+    method: 'POST',
+    body: JSON.stringify({
+      location_name: report.location,
+      category: report.category,
+      severity: report.severity,
+      description: report.description || null,
+      confidence: report.confidence ?? null,
+      status: report.status || 'Queued for review',
+      ai_analysis: report.aiAnalysis || null,
+    }),
+  })
+
+  return normalizeBackendReport(createdReport)
+}
+
+export async function getReportsFromBackend() {
+  const reports = await authenticatedRequest('/api/reports')
+  return reports.map(normalizeBackendReport)
 }
 
 export function getReportById(id) {
