@@ -51,7 +51,7 @@ Municipality receives complaint
 Cleanup is scheduled
 ```
 
-WasteWatch AI aims to move this process one step earlier.
+WasteWatch AI aims to be one step ahead.
 
 The platform combines citizen reports, location, time, waste category, severity, and historical patterns to identify areas that may be developing into waste hotspots.
 
